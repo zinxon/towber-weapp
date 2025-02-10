@@ -37,7 +37,7 @@ export default function Index() {
         <View className="home-icon">
           <Home size={24} />
         </View>
-        <Text className="text-xl font-bold">SpeedAid</Text>
+        <Text className="text-xl font-bold">Towber 拖吧</Text>
         <View className="flex gap-4">
           <Menu size={24} />
           <User size={24} />
@@ -47,14 +47,14 @@ export default function Index() {
       {/* Sound/Status Bar */}
       <View className="flex items-center gap-2 p-3 bg-lime-200">
         <VolumeX size={20} />
-        <Text>SpeedAid平台建议</Text>
+        <Text>Towber 拖吧平台建议</Text>
       </View>
 
       {/* Map Section */}
       <View className="relative h-80">
         <Map
           className="w-full h-full"
-          style={{ width: "100%", height: "300px" }}
+          // style={{ width: "100%", height: "300px" }}
           longitude={-79.3832}
           latitude={43.6532}
           markers={[
