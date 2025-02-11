@@ -2,19 +2,7 @@
 
 import { View, Text, Input, Button, Map, Switch } from "@tarojs/components";
 import { useState, useEffect } from "react";
-import {
-  Home,
-  Menu,
-  User,
-  VolumeX,
-  Phone,
-  MessageCircle,
-  MapPin,
-  Info,
-  Camera,
-  HelpCircle,
-  ShoppingCart,
-} from "lucide-react";
+import { AtIcon } from "taro-ui";
 import mapMarkerIcon from "../../assets/images/map-marker.png";
 import Taro from "@tarojs/taro";
 
@@ -67,26 +55,26 @@ export default function Index() {
 
   return (
     <View className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <View className="flex items-center justify-between p-5 bg-white">
-        <View className="home-icon">
-          <Home size={24} />
+      {/* Header - Refined with better spacing and shadow */}
+      <View className="flex items-center justify-between p-4 bg-white shadow-sm">
+        <View className="p-2">
+          <AtIcon value="home" size={24} color="#4B0082" />
         </View>
-        <Text className="text-xl font-bold">Towber 拖吧</Text>
-        <View className="flex gap-4">
-          <Menu size={24} />
-          <User size={24} />
+        <Text className="text-xl font-bold text-indigo-900">Towber 拖吧</Text>
+        <View className="flex gap-6 p-2">
+          <AtIcon value="menu" size={24} color="#4B0082" />
+          <AtIcon value="user" size={24} color="#4B0082" />
         </View>
       </View>
 
-      {/* Sound/Status Bar */}
-      <View className="flex items-center gap-2 p-3 bg-lime-200">
-        <VolumeX size={20} />
-        <Text>Towber 拖吧平台建议</Text>
+      {/* Status Bar - Better contrast and padding */}
+      <View className="flex items-center gap-2 px-4 py-2 bg-indigo-50 border-b border-indigo-100">
+        <AtIcon value="volume-off" size={20} color="#4B0082" />
+        <Text className="text-sm text-indigo-900">Towber 拖吧平台建议</Text>
       </View>
 
-      {/* Map Section */}
-      <View className="relative h-80">
+      {/* Map Section - Added border and shadow */}
+      <View className="relative h-80 border-b border-gray-200 shadow-inner">
         <Map
           className="w-full h-full"
           longitude={longitude}
@@ -96,34 +84,28 @@ export default function Index() {
             console.log(e);
           }}
         />
-        {/* <View className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black bg-opacity-80 text-white p-3 rounded text-center">
-          <Text className="text-sm">
-            33 Burbank Dr, Toronto, ON M2K 1N1, Canada
-          </Text>
-          <Text className="text-xs mt-1">(距离：20.324km)</Text>
-        </View> */}
       </View>
 
-      {/* Contact Buttons */}
-      <View className="fixed right-5 top-1/2 transform -translate-y-1/2 flex flex-col gap-3 z-50">
-        <Button className="flex flex-col items-center bg-white rounded-lg p-3 shadow">
-          <Phone size={24} color="#4B0082" />
-          <Text className="text-xs mt-1">电话</Text>
+      {/* Contact Buttons - Improved visibility */}
+      <View className="fixed right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-4 z-50">
+        <Button className="flex flex-col items-center bg-white rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow">
+          <AtIcon value="phone" size={24} color="#4B0082" />
+          <Text className="text-xs mt-1 text-indigo-900">电话</Text>
         </Button>
-        <Button className="flex flex-col items-center bg-white rounded-lg p-3 shadow">
-          <MessageCircle size={24} color="#4B0082" />
-          <Text className="text-xs mt-1">资询</Text>
+        <Button className="flex flex-col items-center bg-white rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow">
+          <AtIcon value="message" size={24} color="#4B0082" />
+          <Text className="text-xs mt-1 text-indigo-900">资询</Text>
         </Button>
       </View>
 
-      {/* Location Details */}
-      <View className="bg-white p-4 mt-4">
-        <View className="flex items-center gap-2">
-          <MapPin size={24} color="#FF0000" />
-          <Text className="font-bold">故障地点</Text>
+      {/* Location Details - Better spacing and input styling */}
+      <View className="bg-white p-4 mt-2 shadow-sm">
+        <View className="flex items-center gap-3 mb-2">
+          <AtIcon value="map-pin" size={24} color="#FF0000" />
+          <Text className="font-bold text-gray-800">故障地点</Text>
         </View>
         <Input
-          className="mt-2 w-full border-b border-gray-300 py-2"
+          className="mt-1 w-full border-b border-gray-300 py-3 text-base focus:border-indigo-500"
           placeholder="请输入故障地点"
           onInput={(e) => {
             setLocation(e.detail.value);
@@ -131,10 +113,10 @@ export default function Index() {
         />
       </View>
 
-      {/* Action Buttons */}
-      <View className="flex mt-4">
+      {/* Action Buttons - Improved spacing and transitions */}
+      <View className="flex mt-2 shadow-sm">
         <Button
-          className={`py-2 flex-1 text-sm font-medium ${
+          className={`py-3 flex-1 text-sm font-medium transition-colors ${
             selectedService === "accident"
               ? "bg-indigo-900 text-white"
               : "bg-white text-gray-700 hover:bg-gray-50"
@@ -144,7 +126,7 @@ export default function Index() {
           交通意外
         </Button>
         <Button
-          className={`py-2 flex-1 text-sm font-medium ${
+          className={`py-3 flex-1 text-sm font-medium transition-colors ${
             selectedService === "battery"
               ? "bg-indigo-900 text-white"
               : "bg-white text-gray-700 hover:bg-gray-50"
@@ -154,7 +136,7 @@ export default function Index() {
           搭电
         </Button>
         <Button
-          className={`py-2 flex-1 text-sm font-medium ${
+          className={`py-3 flex-1 text-sm font-medium transition-colors ${
             selectedService === "stuck"
               ? "bg-indigo-900 text-white"
               : "bg-white text-gray-700 hover:bg-gray-50"
@@ -165,19 +147,20 @@ export default function Index() {
         </Button>
       </View>
 
-      {/* Form Section */}
-      <View className="bg-white p-5 mt-4">
-        <View className="flex items-center gap-2 text-gray-600 mb-5">
-          <Info size={20} color="#666" />
-          <Text className="text-sm whitespace-nowrap">
-            适用场景：车辆无法行驶,需要拖动到维修厂或其他位置。
+      {/* Form Section - Improved spacing and visual hierarchy */}
+      <View className="bg-white p-5 mt-2">
+        {/* Form Section - Description */}
+        <View className="flex items-center gap-2 text-gray-600 mb-6 bg-gray-50 px-4 py-2 rounded-md">
+          <AtIcon value="alert-circle" size={20} color="#4B0082" />
+          <Text className="text-sm text-gray-600 truncate">
+            适用场景：车辆无法行驶,需要拖动到维修厂
           </Text>
         </View>
 
         {/* Destination Input */}
         <View className="mb-5">
           <View className="flex items-center gap-2">
-            <MapPin size={24} color="#00FF00" />
+            <AtIcon value="map-pin" size={24} color="#00FF00" />
             <Text className="font-bold">拖车目的地</Text>
           </View>
           <Input
@@ -234,7 +217,7 @@ export default function Index() {
         <View className="mb-5">
           <Text>现场拍照：</Text>
           <View className="w-24 h-24 border-2 border-dashed border-gray-300 flex items-center justify-center mt-2">
-            <Camera size={40} color="#999" />
+            <AtIcon value="camera" size={40} color="#999" />
           </View>
         </View>
 
@@ -248,36 +231,44 @@ export default function Index() {
         <View className="flex items-center gap-2 mb-5">
           <Text>预估费用：</Text>
           <View className="flex items-center gap-1">
-            <HelpCircle size={20} color="#999" />
+            <AtIcon value="help" size={20} color="#999" />
             <Text className="text-lime-500 text-xl font-bold">C$201.30</Text>
+          </View>
+        </View>
+
+        {/* Submit Button and Agreement Text - Added padding bottom */}
+        <View className="pb-20 px-4">
+          <View className="flex flex-col items-center">
+            <Button
+              className="w-full max-w-sm bg-indigo-900 text-white py-2.5 rounded-full font-medium shadow-md hover:bg-indigo-800 transition-colors text-sm"
+              hoverClass="opacity-90"
+            >
+              申请服务
+            </Button>
+            <Text className="text-center text-xs text-gray-500 mt-4">
+              申请服务，即表示已阅读并同意
+              <Text className="text-indigo-900">《Towber拖吧服务协议》</Text>
+            </Text>
           </View>
         </View>
       </View>
 
-      {/* Submit Button */}
-      <Button className="w-11/12 mx-auto mt-5 bg-indigo-900 text-white py-4 rounded">
-        申请服务
-      </Button>
-      <Text className="text-center text-xs text-gray-600 mt-3 mb-20">
-        申请服务，即表示已阅读并同意《Towber拖吧服务协议》
-      </Text>
-
-      {/* Bottom Navigation */}
-      <View className="fixed bottom-0 left-0 right-0 grid grid-cols-4 bg-white py-3 border-t border-gray-200">
+      {/* Bottom Navigation - Fixed position with proper spacing */}
+      <View className="fixed bottom-0 left-0 right-0 grid grid-cols-4 bg-white py-3 border-t border-gray-200 shadow-lg z-10">
         <View className="flex flex-col items-center text-indigo-900">
-          <HelpCircle size={24} color="#4B0082" />
-          <Text className="text-xs mt-1">救援</Text>
+          <AtIcon value="help" size={24} color="#4B0082" />
+          <Text className="text-xs mt-1 font-medium">救援</Text>
         </View>
         <View className="flex flex-col items-center text-gray-600">
-          <Menu size={24} color="#999" />
+          <AtIcon value="menu" size={24} color="#999" />
           <Text className="text-xs mt-1">服务</Text>
         </View>
         <View className="flex flex-col items-center text-gray-600">
-          <ShoppingCart size={24} color="#999" />
+          <AtIcon value="shopping-cart" size={24} color="#999" />
           <Text className="text-xs mt-1">订单</Text>
         </View>
         <View className="flex flex-col items-center text-gray-600">
-          <User size={24} color="#999" />
+          <AtIcon value="user" size={24} color="#999" />
           <Text className="text-xs mt-1">我的</Text>
         </View>
       </View>
