@@ -1,7 +1,7 @@
 "use client";
 
 import { View, Text, Input, Button, Map, Switch } from "@tarojs/components";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Home,
   Menu,
@@ -16,54 +16,19 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import mapMarkerIcon from "../../assets/images/map-marker.png";
-import Taro from "@tarojs/taro";
 
 export default function Index() {
-  const [licensePlate, setLicensePlate] = useState("");
-  const [useWheel, setUseWheel] = useState(false);
-  const [location, setLocation] = useState("");
-  const [destination, setDestination] = useState("");
-  const [selectedService, setSelectedService] = useState<
-    "accident" | "battery" | "stuck" | null
-  >("accident");
-  const [latitude, setLatitude] = useState(43.6532);
-  const [longitude, setLongitude] = useState(-79.3832);
-  const [markers, setMarkers] = useState([
-    {
-      id: 1,
-      latitude: 43.6532,
-      longitude: -79.3832,
-      width: 30,
-      height: 30,
-      iconPath: mapMarkerIcon,
-    },
+  const [licensePlate, setLicensePlate] = useState([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
   ]);
-
-  const getCurrentLocation = async () => {
-    try {
-      const res = await Taro.getLocation({
-        type: "gcj02",
-      });
-      setLatitude(res.latitude);
-      setLongitude(res.longitude);
-
-      const newMarker = {
-        id: 1,
-        latitude: res.latitude,
-        longitude: res.longitude,
-        width: 30,
-        height: 30,
-        iconPath: mapMarkerIcon,
-      };
-      setMarkers([newMarker]);
-    } catch (err) {
-      console.error("Failed to get location:", err);
-    }
-  };
-
-  useEffect(() => {
-    getCurrentLocation();
-  }, []);
+  const [useWheel, setUseWheel] = useState(false);
 
   return (
     <View className="min-h-screen bg-gray-100">
@@ -89,9 +54,19 @@ export default function Index() {
       <View className="relative h-80">
         <Map
           className="w-full h-full"
-          longitude={longitude}
-          latitude={latitude}
-          markers={markers}
+          // style={{ width: "100%", height: "300px" }}
+          longitude={-79.3832}
+          latitude={43.6532}
+          markers={[
+            {
+              id: 1,
+              latitude: 43.6532,
+              longitude: -79.3832,
+              width: 30,
+              height: 30,
+              iconPath: mapMarkerIcon,
+            },
+          ]}
           onError={(e) => {
             console.log(e);
           }}
@@ -122,109 +97,72 @@ export default function Index() {
           <MapPin size={24} color="#FF0000" />
           <Text className="font-bold">故障地点</Text>
         </View>
-        <Input
-          className="mt-2 w-full border-b border-gray-300 py-2"
-          placeholder="请输入故障地点"
-          onInput={(e) => {
-            setLocation(e.detail.value);
-          }}
-        />
+        <Text className="mt-2">33 Burbank Dr, Toronto, ON M2K 1N1, Canada</Text>
       </View>
 
       {/* Action Buttons */}
-      <View className="flex mt-4">
-        <Button
-          className={`py-2 flex-1 text-sm font-medium ${
-            selectedService === "accident"
-              ? "bg-indigo-900 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-          onClick={() => setSelectedService("accident")}
-        >
-          交通意外
-        </Button>
-        <Button
-          className={`py-2 flex-1 text-sm font-medium ${
-            selectedService === "battery"
-              ? "bg-indigo-900 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-          onClick={() => setSelectedService("battery")}
-        >
-          搭电
-        </Button>
-        <Button
-          className={`py-2 flex-1 text-sm font-medium ${
-            selectedService === "stuck"
-              ? "bg-indigo-900 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-          onClick={() => setSelectedService("stuck")}
-        >
-          脱困
-        </Button>
+      <View className="grid grid-cols-3 gap-px mt-4">
+        <Button className="py-4 bg-indigo-900 text-white">交通意外</Button>
+        <Button className="py-4 bg-white">搭电</Button>
+        <Button className="py-4 bg-white">脱困</Button>
       </View>
 
       {/* Form Section */}
       <View className="bg-white p-5 mt-4">
         <View className="flex items-center gap-2 text-gray-600 mb-5">
           <Info size={20} color="#666" />
-          <Text className="text-sm whitespace-nowrap">
+          <Text className="text-sm">
             适用场景：车辆无法行驶,需要拖动到维修厂或其他位置。
           </Text>
         </View>
 
-        {/* Destination Input */}
         <View className="mb-5">
           <View className="flex items-center gap-2">
             <MapPin size={24} color="#00FF00" />
             <Text className="font-bold">拖车目的地</Text>
           </View>
-          <Input
-            className="mt-2 w-full border-b border-gray-300 py-2"
-            placeholder="请输入目的地"
-            onInput={(e) => {
-              setDestination(e.detail.value);
-            }}
-          />
+          <Text className="mt-2">
+            18 Laidlaw Blvd Unit 1, Markham, ON L3P 1W7
+          </Text>
         </View>
 
         {/* License Plate Input */}
         <View className="mb-5">
-          <View className="flex items-center">
-            <Text className="text-red-500 mr-1">*</Text>
-            <Text>车牌号码：</Text>
+          <Text className="text-red-500 mr-1">*</Text>
+          <Text>车牌号码：</Text>
+          <View className="flex gap-1 mt-2">
+            {licensePlate.map((value, index) => (
+              <Input
+                key={index}
+                className="w-10 h-10 border border-gray-300 text-center text-lg"
+                value={value}
+                maxlength={1}
+                onInput={(e) => {
+                  const newPlate = [...licensePlate];
+                  newPlate[index] = e.detail.value;
+                  setLicensePlate(newPlate);
+                }}
+              />
+            ))}
           </View>
-          <Input
-            className="mt-2 w-full border-b border-gray-300 py-2"
-            placeholder="请输入车牌号码"
-            maxlength={8}
-            onInput={(e) => {
-              setLicensePlate(e.detail.value);
-            }}
-            value={licensePlate}
-          />
+          <Text className="text-indigo-900 mt-2">来自我的</Text>
         </View>
 
         {/* Customer Info */}
         <View className="mb-5">
           <View className="mb-3">
-            <View className="flex items-center">
-              <Text className="text-red-500 mr-1">*</Text>
-              <Text>客户姓名：</Text>
-            </View>
+            <Text className="text-red-500 mr-1">*</Text>
+            <Text>客户姓名：</Text>
             <Input
-              className="mt-2 w-full border-b border-gray-300 py-2"
+              className="border-b border-gray-300 py-1 w-full mt-1"
               placeholder="请输入姓名"
             />
           </View>
           <View>
-            <View className="flex items-center">
-              <Text className="text-red-500 mr-1">*</Text>
-              <Text>联系电话：</Text>
-            </View>
+            <Text className="text-red-500 mr-1">*</Text>
+            <Text>联系电话：</Text>
             <Input
-              className="mt-2 w-full border-b border-gray-300 py-2"
+              className="border-b border-gray-300 py-1 w-full mt-1"
               placeholder="请输入联系电话"
             />
           </View>
@@ -259,7 +197,7 @@ export default function Index() {
         申请服务
       </Button>
       <Text className="text-center text-xs text-gray-600 mt-3 mb-20">
-        申请服务，即表示已阅读并同意《Towber拖吧服务协议》
+        申请服务，即表示已阅读并同意《SpeedAid服务协议》
       </Text>
 
       {/* Bottom Navigation */}
