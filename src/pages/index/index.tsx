@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { AtIcon } from "taro-ui";
 import mapMarkerIcon from "../../assets/images/map-marker.png";
 import Taro from "@tarojs/taro";
+import { reverseGeocode } from "../../utils/geocoder";
 
 export default function Index() {
   const [licensePlate, setLicensePlate] = useState("");
@@ -14,13 +15,14 @@ export default function Index() {
   const [selectedService, setSelectedService] = useState<
     "accident" | "battery" | "stuck" | null
   >("accident");
-  const [latitude, setLatitude] = useState(43.6532);
-  const [longitude, setLongitude] = useState(-79.3832);
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [markers, setMarkers] = useState([
     {
       id: 1,
-      latitude: 43.6532,
-      longitude: -79.3832,
+      latitude: 0,
+      longitude: 0,
       width: 30,
       height: 30,
       iconPath: mapMarkerIcon,
@@ -29,9 +31,13 @@ export default function Index() {
 
   const getCurrentLocation = async () => {
     try {
+      setIsLoading(true);
       const res = await Taro.getLocation({
         type: "gcj02",
+        isHighAccuracy: true,
+        highAccuracyExpireTime: 3000,
       });
+
       setLatitude(res.latitude);
       setLongitude(res.longitude);
 
@@ -44,8 +50,23 @@ export default function Index() {
         iconPath: mapMarkerIcon,
       };
       setMarkers([newMarker]);
+
+      // Get address using node-geocoder
+      // const address = await reverseGeocode(res.latitude, res.longitude);
+      // if (address) {
+      //   setLocation(address);
+      // } else {
+      //   // Fallback to coordinates if geocoding fails
+      //   setLocation(`${res.latitude.toFixed(6)}, ${res.longitude.toFixed(6)}`);
+      // }
     } catch (err) {
       console.error("Failed to get location:", err);
+      Taro.showToast({
+        title: "获取位置失败",
+        icon: "none",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,23 +88,45 @@ export default function Index() {
         </View>
       </View>
 
-      {/* Status Bar - Better contrast and padding */}
-      <View className="flex items-center gap-2 px-4 py-2 bg-indigo-50 border-b border-indigo-100">
-        <AtIcon value="volume-off" size={20} color="#4B0082" />
-        <Text className="text-sm text-indigo-900">Towber 拖吧平台建议</Text>
+      {/* Status Bar with Marquee effect */}
+      <View className="flex items-center px-4 py-2 bg-indigo-50 border-b border-indigo-100">
+        <AtIcon
+          value="volume-plus"
+          size={20}
+          color="#4B0082"
+          className="flex-shrink-0 mr-2"
+        />
+        <View className="overflow-hidden relative flex-1">
+          <Text className="sliding-text text-sm text-indigo-900">
+            Towber 拖吧平台 -
+            大多伦多地区最大华人拖车团队，精通国粤双语，提供24小时拖车服务
+          </Text>
+        </View>
       </View>
 
       {/* Map Section - Added border and shadow */}
       <View className="relative h-80 border-b border-gray-200 shadow-inner">
-        <Map
-          className="w-full h-full"
-          longitude={longitude}
-          latitude={latitude}
-          markers={markers}
-          onError={(e) => {
-            console.log(e);
-          }}
-        />
+        {isLoading ? (
+          <View className="absolute inset-0 flex items-center justify-center bg-gray-50">
+            <Text className="text-gray-500">定位中...</Text>
+          </View>
+        ) : (
+          <Map
+            className="w-full h-full"
+            longitude={longitude}
+            latitude={latitude}
+            markers={markers}
+            scale={14}
+            showLocation
+            onError={(e) => {
+              console.log(e);
+              Taro.showToast({
+                title: "地图加载失败",
+                icon: "none",
+              });
+            }}
+          />
+        )}
       </View>
 
       {/* Contact Buttons - Improved visibility */}
@@ -107,6 +150,7 @@ export default function Index() {
         <Input
           className="mt-1 w-full border-b border-gray-300 py-3 text-base focus:border-indigo-500"
           placeholder="请输入故障地点"
+          value={location}
           onInput={(e) => {
             setLocation(e.detail.value);
           }}
@@ -256,7 +300,7 @@ export default function Index() {
       {/* Bottom Navigation - Fixed position with proper spacing */}
       <View className="fixed bottom-0 left-0 right-0 grid grid-cols-4 bg-white py-3 border-t border-gray-200 shadow-lg z-10">
         <View className="flex flex-col items-center text-indigo-900">
-          <AtIcon value="help" size={24} color="#4B0082" />
+          <AtIcon value="lightning-bolt" size={24} color="#4B0082" />
           <Text className="text-xs mt-1 font-medium">救援</Text>
         </View>
         <View className="flex flex-col items-center text-gray-600">
@@ -264,7 +308,7 @@ export default function Index() {
           <Text className="text-xs mt-1">服务</Text>
         </View>
         <View className="flex flex-col items-center text-gray-600">
-          <AtIcon value="shopping-cart" size={24} color="#999" />
+          <AtIcon value="folder" size={24} color="#999" />
           <Text className="text-xs mt-1">订单</Text>
         </View>
         <View className="flex flex-col items-center text-gray-600">

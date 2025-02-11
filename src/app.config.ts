@@ -1,11 +1,16 @@
 export default defineAppConfig({
-  pages: [
-    'pages/index/index'
-  ],
+  pages: ["pages/index/index"],
   window: {
-    backgroundTextStyle: 'light',
-    navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'WeChat',
-    navigationBarTextStyle: 'black'
-  }
-})
+    backgroundTextStyle: "light",
+    navigationBarBackgroundColor: "#fff",
+    navigationBarTitleText: "Towber 拖吧",
+    navigationBarTextStyle: "black",
+  },
+  requiredBackgroundModes: ["location"],
+  requiredPrivateInfos: ["getLocation"],
+  permission: {
+    "scope.userLocation": {
+      desc: "您的位置信息将用于获取故障车辆位置",
+    },
+  },
+});
