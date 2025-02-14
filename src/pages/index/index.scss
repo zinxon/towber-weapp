@@ -12,4 +12,15 @@
   padding-left: 100%;
   animation: slide 15s linear infinite;
   white-space: nowrap;
+  background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 500;
+}
+
+// Add smooth transitions
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }

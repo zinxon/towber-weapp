@@ -75,29 +75,29 @@ export default function Index() {
   }, []);
 
   return (
-    <View className="min-h-screen bg-gray-100">
-      {/* Header - Refined with better spacing and shadow */}
-      <View className="flex items-center justify-between p-4 bg-white shadow-sm">
+    <View className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+      {/* Header - Modern gradient */}
+      <View className="flex items-center justify-between p-4 bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
         <View className="p-2">
-          <AtIcon value="home" size={24} color="#4B0082" />
+          <AtIcon value="home" size={24} color="#FFFFFF" />
         </View>
-        <Text className="text-xl font-bold text-indigo-900">Towber 拖吧</Text>
+        <Text className="text-xl font-bold text-white">Towber 拖吧</Text>
         <View className="flex gap-6 p-2">
-          <AtIcon value="menu" size={24} color="#4B0082" />
-          <AtIcon value="user" size={24} color="#4B0082" />
+          <AtIcon value="menu" size={24} color="#FFFFFF" />
+          <AtIcon value="user" size={24} color="#FFFFFF" />
         </View>
       </View>
 
-      {/* Status Bar with Marquee effect */}
-      <View className="flex items-center px-4 py-2 bg-indigo-50 border-b border-indigo-100">
+      {/* Status Bar - Gradient accent */}
+      <View className="flex items-center px-4 py-3 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-indigo-100">
         <AtIcon
           value="volume-plus"
           size={20}
-          color="#4B0082"
+          color="#4F46E5"
           className="flex-shrink-0 mr-2"
         />
         <View className="overflow-hidden relative flex-1">
-          <Text className="sliding-text text-sm text-indigo-900">
+          <Text className="sliding-text text-sm text-indigo-700 font-medium">
             Towber 拖吧平台 -
             大多伦多地区最大华人拖车团队，精通国粤双语，提供24小时拖车服务
           </Text>
@@ -129,15 +129,15 @@ export default function Index() {
         )}
       </View>
 
-      {/* Contact Buttons - Improved visibility */}
+      {/* Contact Buttons - Glass morphism effect */}
       <View className="fixed right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-4 z-50">
-        <Button className="flex flex-col items-center bg-white rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow">
-          <AtIcon value="phone" size={24} color="#4B0082" />
-          <Text className="text-xs mt-1 text-indigo-900">电话</Text>
+        <Button className="flex flex-col items-center bg-white/80 backdrop-blur-sm rounded-2xl p-3 shadow-lg hover:shadow-xl transition-all">
+          <AtIcon value="phone" size={24} color="#4F46E5" />
+          <Text className="text-xs mt-1 text-indigo-700 font-medium">电话</Text>
         </Button>
-        <Button className="flex flex-col items-center bg-white rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow">
-          <AtIcon value="message" size={24} color="#4B0082" />
-          <Text className="text-xs mt-1 text-indigo-900">资询</Text>
+        <Button className="flex flex-col items-center bg-white/80 backdrop-blur-sm rounded-2xl p-3 shadow-lg hover:shadow-xl transition-all">
+          <AtIcon value="message" size={24} color="#4F46E5" />
+          <Text className="text-xs mt-1 text-indigo-700 font-medium">资询</Text>
         </Button>
       </View>
 
@@ -157,33 +157,33 @@ export default function Index() {
         />
       </View>
 
-      {/* Action Buttons - Improved spacing and transitions */}
-      <View className="flex mt-2 shadow-sm">
+      {/* Action Buttons - Gradient states */}
+      <View className="flex mt-2 shadow-sm rounded-lg overflow-hidden">
         <Button
-          className={`py-3 flex-1 text-sm font-medium transition-colors ${
+          className={`py-3 flex-1 text-sm font-medium transition-all ${
             selectedService === "accident"
-              ? "bg-indigo-900 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-50"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+              : "bg-white text-gray-700 hover:bg-indigo-50"
           }`}
           onClick={() => setSelectedService("accident")}
         >
           交通意外
         </Button>
         <Button
-          className={`py-3 flex-1 text-sm font-medium transition-colors ${
+          className={`py-3 flex-1 text-sm font-medium transition-all ${
             selectedService === "battery"
-              ? "bg-indigo-900 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-50"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+              : "bg-white text-gray-700 hover:bg-indigo-50"
           }`}
           onClick={() => setSelectedService("battery")}
         >
           搭电
         </Button>
         <Button
-          className={`py-3 flex-1 text-sm font-medium transition-colors ${
+          className={`py-3 flex-1 text-sm font-medium transition-all ${
             selectedService === "stuck"
-              ? "bg-indigo-900 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-50"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+              : "bg-white text-gray-700 hover:bg-indigo-50"
           }`}
           onClick={() => setSelectedService("stuck")}
         >
@@ -280,12 +280,12 @@ export default function Index() {
           </View>
         </View>
 
-        {/* Submit Button and Agreement Text - Added padding bottom */}
+        {/* Submit Button - Gradient style */}
         <View className="pb-20 px-4">
           <View className="flex flex-col items-center">
             <Button
-              className="w-full max-w-sm bg-indigo-900 text-white py-2.5 rounded-full font-medium shadow-md hover:bg-indigo-800 transition-colors text-sm"
-              hoverClass="opacity-90"
+              className="w-full max-w-sm bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-full font-medium shadow-md hover:opacity-90 transition-all text-sm"
+              hoverClass="opacity-80"
             >
               申请服务
             </Button>
@@ -297,10 +297,10 @@ export default function Index() {
         </View>
       </View>
 
-      {/* Bottom Navigation - Fixed position with proper spacing */}
-      <View className="fixed bottom-0 left-0 right-0 grid grid-cols-4 bg-white py-3 border-t border-gray-200 shadow-lg z-10">
-        <View className="flex flex-col items-center text-indigo-900">
-          <AtIcon value="lightning-bolt" size={24} color="#4B0082" />
+      {/* Bottom Navigation - Glass morphism */}
+      <View className="fixed bottom-0 left-0 right-0 grid grid-cols-4 bg-white/80 backdrop-blur-sm py-3 border-t border-indigo-100 shadow-lg z-10">
+        <View className="flex flex-col items-center text-indigo-700">
+          <AtIcon value="lightning-bolt" size={24} color="#4F46E5" />
           <Text className="text-xs mt-1 font-medium">救援</Text>
         </View>
         <View className="flex flex-col items-center text-gray-600">
