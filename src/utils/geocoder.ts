@@ -1,57 +1,38 @@
-import NodeGeocoder from "node-geocoder";
 import Taro from "@tarojs/taro";
 
-// Custom fetch implementation for Taro environment
-const customFetch = async (url: string, options: any) => {
-  try {
-    const response = await Taro.request({
-      url,
-      method: options.method || "GET",
-      data: options.body,
-      header: options.headers,
-    });
-    return {
-      json: () => Promise.resolve(response.data),
-      ok: response.statusCode >= 200 && response.statusCode < 300,
-    };
-  } catch (error) {
-    throw error;
-  }
-};
-
-const options = {
-  provider: "mapbox",
-  apiKey:
-    "pk.eyJ1Ijoic2hpbmdzb256IiwiYSI6ImNtNnp4anNsdTA5NHgydnBxamVwcnYxNzQifQ.K9u-AwxLnhyTLzIX7pyHOg",
-  //   fetch: customFetch,
-  language: "zh", // Set language to Chinese
-  formatter: null,
-};
-
-const geocoder = NodeGeocoder(options);
+const MAPBOX_ACCESS_TOKEN =
+  "pk.eyJ1Ijoic2hpbmdzb256IiwiYSI6ImNtNnp4anNsdTA5NHgydnBxamVwcnYxNzQifQ.K9u-AwxLnhyTLzIX7pyHOg";
 
 export const reverseGeocode = async (
   latitude: number,
   longitude: number
 ): Promise<string | null> => {
   try {
-    const results = await geocoder.reverse({ lat: latitude, lon: longitude });
+    // Construct URL with query parameters
+    const url = `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${longitude}&latitude=${latitude}&access_token=${MAPBOX_ACCESS_TOKEN}&language=en`;
 
-    if (results && results.length > 0) {
-      const result = results[0];
-      const formattedAddress = [
-        result.streetNumber,
-        result.streetName,
-        result.city,
-        result.administrativeLevels?.level1long,
-        result.zipcode,
-        result.country,
-      ]
-        .filter(Boolean)
-        .join(", ");
+    const response = await Taro.request({
+      url,
+      method: "GET",
+      enableHttp2: true, // Enable HTTP/2 for better performance
+      enableQuic: true, // Enable QUIC if available
+      timeout: 10000, // Set timeout to 10 seconds
+    });
 
-      return formattedAddress;
+    console.log("Geocoding response:", response);
+
+    if (
+      response.statusCode === 200 &&
+      response.data.features &&
+      response.data.features.length > 0
+    ) {
+      const feature = response.data.features[0];
+      const address = feature.properties.full_address;
+      console.log("Found address:", address);
+      return address;
     }
+
+    console.log("No address found in response:", response.data);
     return null;
   } catch (error) {
     console.error("Error in reverse geocoding:", error);

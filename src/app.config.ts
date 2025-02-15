@@ -13,4 +13,10 @@ export default defineAppConfig({
       desc: "您的位置信息将用于获取故障车辆位置",
     },
   },
+  networkTimeout: {
+    request: 10000,
+    connectSocket: 10000,
+    uploadFile: 10000,
+    downloadFile: 10000,
+  },
 });

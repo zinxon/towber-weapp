@@ -11,7 +11,7 @@ export default function Index() {
   const [licensePlate, setLicensePlate] = useState("");
   const [useWheel, setUseWheel] = useState(false);
   const [location, setLocation] = useState("");
-  const [destination, setDestination] = useState("");
+  const [destination, setDestination] = useState("27 Harlech Court");
   const [selectedService, setSelectedService] = useState<
     "accident" | "battery" | "stuck" | null
   >("accident");
@@ -28,6 +28,10 @@ export default function Index() {
       iconPath: mapMarkerIcon,
     },
   ]);
+
+  // Add state for customer info
+  const [customerName, setCustomerName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const getCurrentLocation = async () => {
     try {
@@ -51,14 +55,19 @@ export default function Index() {
       };
       setMarkers([newMarker]);
 
-      // Get address using node-geocoder
-      // const address = await reverseGeocode(res.latitude, res.longitude);
-      // if (address) {
-      //   setLocation(address);
-      // } else {
-      //   // Fallback to coordinates if geocoding fails
-      //   setLocation(`${res.latitude.toFixed(6)}, ${res.longitude.toFixed(6)}`);
-      // }
+      // Get address using Mapbox Geocoding API
+      const address = await reverseGeocode(res.latitude, res.longitude);
+      // console.log("address", address);
+      // Taro.showToast({
+      //   title: `address: ${address}`,
+      //   icon: "none",
+      // });
+      if (address) {
+        setLocation(address);
+      } else {
+        // Fallback to coordinates if geocoding fails
+        setLocation(`${res.latitude.toFixed(6)}, ${res.longitude.toFixed(6)}`);
+      }
     } catch (err) {
       console.error("Failed to get location:", err);
       Taro.showToast({
@@ -67,6 +76,77 @@ export default function Index() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    // Check required fields
+    if (!licensePlate) {
+      Taro.showToast({
+        title: "请输入车牌号码",
+        icon: "none",
+      });
+      return;
+    }
+
+    if (!customerName) {
+      Taro.showToast({
+        title: "请输入客户姓名",
+        icon: "none",
+      });
+      return;
+    }
+
+    if (!phoneNumber) {
+      Taro.showToast({
+        title: "请输入联系电话",
+        icon: "none",
+      });
+      return;
+    }
+
+    // Form data object
+    const formData = {
+      location,
+      destination,
+      licensePlate,
+      customerName,
+      phoneNumber,
+      useWheel,
+      selectedService,
+      latitude,
+      longitude,
+    };
+
+    try {
+      const response = await Taro.request({
+        url: "https://towber-api.shingsonz.workers.dev/api/orders",
+        method: "POST",
+        data: formData,
+        header: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.statusCode === 200 || response.statusCode === 201) {
+        console.log("Form submitted successfully:", response.data);
+        Taro.showToast({
+          title: "提交成功",
+          icon: "success",
+        });
+      } else {
+        console.error("Submission failed:", response.data);
+        Taro.showToast({
+          title: "提交失败，请重试",
+          icon: "none",
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      Taro.showToast({
+        title: "提交失败，请检查网络",
+        icon: "none",
+      });
     }
   };
 
@@ -210,6 +290,7 @@ export default function Index() {
           <Input
             className="mt-2 w-full border-b border-gray-300 py-2"
             placeholder="请输入目的地"
+            value={destination}
             onInput={(e) => {
               setDestination(e.detail.value);
             }}
@@ -243,6 +324,8 @@ export default function Index() {
             <Input
               className="mt-2 w-full border-b border-gray-300 py-2"
               placeholder="请输入姓名"
+              value={customerName}
+              onInput={(e) => setCustomerName(e.detail.value)}
             />
           </View>
           <View>
@@ -253,6 +336,8 @@ export default function Index() {
             <Input
               className="mt-2 w-full border-b border-gray-300 py-2"
               placeholder="请输入联系电话"
+              value={phoneNumber}
+              onInput={(e) => setPhoneNumber(e.detail.value)}
             />
           </View>
         </View>
@@ -286,6 +371,7 @@ export default function Index() {
             <Button
               className="w-full max-w-sm bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-full font-medium shadow-md hover:opacity-90 transition-all text-sm"
               hoverClass="opacity-80"
+              onClick={handleSubmit}
             >
               申请服务
             </Button>

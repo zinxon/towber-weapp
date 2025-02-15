@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "./",
-  "projectname": "taro-react-tailwind-vscode-template",
-  "appid": "testAppId",
+  "projectname": "towber-weapp",
+  "appid": "wx646c34b5e8cf376a",
   "setting": {
     "es6": false,
     "minified": false
