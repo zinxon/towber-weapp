@@ -36,6 +36,22 @@ export const reverseGeocode = async (
     return null;
   } catch (error) {
     console.error("Error in reverse geocoding:", error);
+
+    // Parse the error object for meaningful messages
+    let errorMessage = "提交失败，请检查网络"; // Default error message
+
+    if (error && typeof error === "object") {
+      if (error.message) {
+        errorMessage = `提交失败: ${error.message}`;
+      } else if (error.errMsg) {
+        errorMessage = `提交失败: ${error.errMsg}`;
+      }
+    }
+
+    Taro.showToast({
+      title: errorMessage,
+      icon: "none",
+    });
     return null;
   }
 };

@@ -142,9 +142,19 @@ export default function Index() {
         });
       }
     } catch (error) {
+      // Parse the error object for meaningful messages
+      let errorMessage = "提交失败，请检查网络"; // Default error message
+
+      if (error && typeof error === "object") {
+        if (error.message) {
+          errorMessage = `提交失败: ${error.message}`;
+        } else if (error.errMsg) {
+          errorMessage = `提交失败: ${error.errMsg}`;
+        }
+      }
       console.error("Error submitting form:", error);
       Taro.showToast({
-        title: "提交失败，请检查网络",
+        title: errorMessage,
         icon: "none",
       });
     }
