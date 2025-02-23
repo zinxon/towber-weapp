@@ -6,6 +6,7 @@ import { AtIcon } from "taro-ui";
 import mapMarkerIcon from "../../assets/images/map-marker.png";
 import Taro from "@tarojs/taro";
 import { reverseGeocode } from "../../utils/geocoder";
+import BottomNavigation from "../../components/BottomNavigation";
 
 export default function Index() {
   const [licensePlate, setLicensePlate] = useState("");
@@ -174,7 +175,12 @@ export default function Index() {
         <Text className="text-xl font-bold text-white">Towber 拖吧</Text>
         <View className="flex gap-6 p-2">
           <AtIcon value="menu" size={24} color="#FFFFFF" />
-          <AtIcon value="user" size={24} color="#FFFFFF" />
+          <AtIcon
+            value="user"
+            size={24}
+            color="#FFFFFF"
+            onClick={() => Taro.navigateTo({ url: "/pages/user/index" })}
+          />
         </View>
       </View>
 
@@ -375,7 +381,7 @@ export default function Index() {
           </View>
         </View>
 
-        {/* Submit Button - Gradient style */}
+        {/* Submit Button and agreement text */}
         <View className="pb-20 px-4">
           <View className="flex flex-col items-center">
             <Button
@@ -393,25 +399,8 @@ export default function Index() {
         </View>
       </View>
 
-      {/* Bottom Navigation - Glass morphism */}
-      <View className="fixed bottom-0 left-0 right-0 grid grid-cols-4 bg-white/80 backdrop-blur-sm py-3 border-t border-indigo-100 shadow-lg z-10">
-        <View className="flex flex-col items-center text-indigo-700">
-          <AtIcon value="lightning-bolt" size={24} color="#4F46E5" />
-          <Text className="text-xs mt-1 font-medium">救援</Text>
-        </View>
-        <View className="flex flex-col items-center text-gray-600">
-          <AtIcon value="menu" size={24} color="#999" />
-          <Text className="text-xs mt-1">服务</Text>
-        </View>
-        <View className="flex flex-col items-center text-gray-600">
-          <AtIcon value="folder" size={24} color="#999" />
-          <Text className="text-xs mt-1">订单</Text>
-        </View>
-        <View className="flex flex-col items-center text-gray-600">
-          <AtIcon value="user" size={24} color="#999" />
-          <Text className="text-xs mt-1">我的</Text>
-        </View>
-      </View>
+      {/* Bottom Navigation */}
+      <BottomNavigation active="rescue" />
     </View>
   );
 }
