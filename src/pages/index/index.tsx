@@ -1,7 +1,15 @@
 "use client";
 
-import { View, Text, Input, Button, Map, Switch } from "@tarojs/components";
-import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Input,
+  Button,
+  Map,
+  Switch,
+  Image,
+} from "@tarojs/components";
+import { useState, useEffect, useRef } from "react";
 import { AtIcon } from "taro-ui";
 import mapMarkerIcon from "../../assets/images/map-marker.png";
 import Taro from "@tarojs/taro";
@@ -33,6 +41,11 @@ export default function Index() {
   // Add state for customer info
   const [customerName, setCustomerName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+
+  // Add these to the state declarations in the component
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const getCurrentLocation = async () => {
     try {
@@ -159,6 +172,97 @@ export default function Index() {
         icon: "none",
       });
     }
+  };
+
+  // Add this function for handling photo uploads
+  const handlePhotoUpload = async () => {
+    try {
+      // Choose image from album or camera
+      const res = await Taro.chooseImage({
+        count: 9, // Allow multiple photos
+        sizeType: ["compressed"],
+        sourceType: ["album", "camera"],
+      });
+
+      if (res.tempFilePaths && res.tempFilePaths.length > 0) {
+        // Add to selected photos
+        setSelectedPhotos((prev) => [...prev, ...res.tempFilePaths]);
+
+        // Upload photos to R2
+        setIsUploading(true);
+        setUploadProgress(0);
+
+        for (let i = 0; i < res.tempFilePaths.length; i++) {
+          const tempFilePath = res.tempFilePaths[i];
+          console.log("Selected image path:", tempFilePath);
+
+          // Get the file extension
+          const fileExt = tempFilePath.split(".").pop();
+          const fileName = `incident-${Date.now()}-${i}.${fileExt}`;
+
+          try {
+            // Get presigned URL from your backend
+            // const presignedUrlRes = await Taro.request({
+            //   url: "https://towber-api.shingsonz.workers.dev/api/upload",
+            //   method: "PUT",
+            //   data: {
+            //     fileName,
+            //     contentType: `image/${fileExt}`,
+            //   },
+            // });
+
+            // if (presignedUrlRes.statusCode !== 200) {
+            //   throw new Error("Failed to get upload URL");
+            // }
+
+            // const uploadUrl = presignedUrlRes.data.url;
+            // console.log("Got presigned URL:", uploadUrl);
+
+            // Upload to R2
+            const uploadRes = await Taro.uploadFile({
+              url: "https://towber-api.shingsonz.workers.dev/api/upload",
+              filePath: tempFilePath,
+              name: "file",
+              header: {
+                "Content-Type": `image/${fileExt}`,
+              },
+            });
+
+            if (uploadRes.statusCode !== 200) {
+              throw new Error("Upload failed");
+            }
+
+            // Update progress
+            setUploadProgress(
+              Math.round(((i + 1) / res.tempFilePaths.length) * 100)
+            );
+          } catch (error) {
+            console.error(`Failed to upload photo ${i}:`, error);
+            Taro.showToast({
+              title: `上传第 ${i + 1} 张照片失败`,
+              icon: "none",
+            });
+          }
+        }
+
+        Taro.showToast({
+          title: "上传完成",
+          icon: "success",
+        });
+      }
+    } catch (error) {
+      console.error("Photo selection failed:", error);
+      Taro.showToast({
+        title: "选择照片失败",
+        icon: "none",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    setSelectedPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
   useEffect(() => {
@@ -361,8 +465,41 @@ export default function Index() {
         {/* Photo Upload */}
         <View className="mb-5">
           <Text>现场拍照：</Text>
-          <View className="w-24 h-24 border-2 border-dashed border-gray-300 flex items-center justify-center mt-2">
-            <AtIcon value="camera" size={40} color="#999" />
+          <View className="flex flex-wrap gap-2 mt-2">
+            {selectedPhotos.map((photo, index) => (
+              <View key={index} className="relative w-24 h-24">
+                <Image
+                  src={photo}
+                  className="w-full h-full object-cover rounded-md"
+                  mode="aspectFill"
+                />
+                <View
+                  className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
+                  onClick={() => removePhoto(index)}
+                >
+                  <AtIcon value="close" size={14} color="#FFFFFF" />
+                </View>
+              </View>
+            ))}
+
+            <View
+              className="w-24 h-24 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center rounded-md"
+              onClick={!isUploading ? handlePhotoUpload : undefined}
+            >
+              {isUploading ? (
+                <View className="flex flex-col items-center">
+                  <AtIcon value="loading-2" size={24} color="#999" />
+                  <Text className="text-xs text-gray-500 mt-1">
+                    {uploadProgress}%
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  <AtIcon value="camera" size={32} color="#999" />
+                  <Text className="text-xs text-gray-500 mt-1">添加照片</Text>
+                </>
+              )}
+            </View>
           </View>
         </View>
 

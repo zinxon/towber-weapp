@@ -41,23 +41,32 @@ export default function UserProfile() {
     try {
       // First get the login code
       const { code } = await Taro.login();
+      console.log("Login code:", code);
+
       if (!code) {
         throw new Error("Login failed");
       }
 
-      // Get user info through button tap
-      const { userInfo } = await Taro.getUserInfo({
+      // Get user profile through button tap
+      const userProfileRes = await Taro.getUserInfo({
+        // desc: "用于完善会员资料",
         lang: "zh_CN",
       });
 
-      if (userInfo) {
-        setUserInfo(userInfo);
+      console.log("User profile response:", userProfileRes);
+
+      if (userProfileRes.userInfo) {
+        console.log("User info:", userProfileRes.userInfo);
+        setUserInfo(userProfileRes.userInfo);
         setIsLoggedIn(true);
         // Store user info
-        Taro.setStorageSync("userInfo", JSON.stringify(userInfo));
+        Taro.setStorageSync(
+          "userInfo",
+          JSON.stringify(userProfileRes.userInfo)
+        );
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Login failed with error:", error);
       Taro.showToast({
         title: "登录失败，请重试",
         icon: "none",
@@ -100,9 +109,9 @@ export default function UserProfile() {
           </View>
         ) : (
           <Button
-            className="bg-indigo-600 text-white py-3 rounded-lg w-full"
-            openType="getUserInfo"
-            onGetUserInfo={handleLogin}
+            className="w-full max-w-sm bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-full font-medium shadow-md hover:opacity-90 transition-all text-sm"
+            hoverClass="opacity-80"
+            onClick={handleLogin}
           >
             微信登录
           </Button>
@@ -140,12 +149,15 @@ export default function UserProfile() {
 
       {/* Logout Button */}
       {isLoggedIn && (
-        <Button
-          className="mx-5 mt-8 bg-red-500 text-white py-3 rounded-lg"
-          onClick={handleLogout}
-        >
-          退出登录
-        </Button>
+        <View className="px-4 pt-10">
+          <Button
+            className="w-full max-w-sm bg-gradient-to-r from-red-600 to-rose-600 text-white py-3 rounded-full font-medium shadow-md hover:opacity-90 transition-all text-sm"
+            hoverClass="opacity-80"
+            onClick={handleLogout}
+          >
+            退出登录
+          </Button>
+        </View>
       )}
       <BottomNavigation active="profile" />
     </View>
