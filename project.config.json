@@ -21,6 +21,9 @@
     "useMultiFrameRuntime": false,
     "useApiHook": true,
     "useApiHostProcess": false,
+    "uploadFile": [
+      "https://towber-api.shingsonz.workers.dev"
+    ],
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],

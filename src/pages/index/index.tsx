@@ -219,7 +219,6 @@ export default function Index() {
 
           // Get the file extension
           const fileExt = tempFilePath.split(".").pop();
-          // const fileName = `incident-${Date.now()}-${i}.${fileExt}`;
 
           try {
             // Get presigned URL from your backend
@@ -247,17 +246,37 @@ export default function Index() {
               header: {
                 "Content-Type": `image/${fileExt}`,
               },
+              success: (successRes) => {
+                console.log("Upload success response:", successRes);
+              },
+              fail: (error) => {
+                console.error("Upload failed with error:", error);
+                // Check if it's a domain restriction error
+                if (error.errMsg && error.errMsg.includes("fail domain")) {
+                  Taro.showModal({
+                    title: "上传失败",
+                    content: "请确保已在小程序配置中添加上传域名",
+                    showCancel: false,
+                  });
+                }
+              },
             });
-            // console.log("uploadRes", uploadRes);
+
             if (uploadRes.statusCode === 200) {
               // Parse the response to get the filename
               const data = JSON.parse(uploadRes.data);
               if (data.success && data.filename) {
                 newImageKeys.push(data.filename);
-                console.log("newImageKeys", newImageKeys);
+                console.log(
+                  "Successfully uploaded image, got filename:",
+                  data.filename
+                );
               }
             } else {
-              throw new Error("Upload failed");
+              console.error("Upload failed with status:", uploadRes.statusCode);
+              throw new Error(
+                `Upload failed with status ${uploadRes.statusCode}`
+              );
             }
 
             // Update progress
@@ -266,9 +285,12 @@ export default function Index() {
             );
           } catch (error) {
             console.error(`Failed to upload photo ${i}:`, error);
-            Taro.showToast({
-              title: `上传第 ${i + 1} 张照片失败`,
-              icon: "none",
+            Taro.showModal({
+              title: "上传失败",
+              content: `上传第 ${i + 1} 张照片失败: ${
+                error.message || "未知错误"
+              }`,
+              showCancel: false,
             });
           }
         }
@@ -280,16 +302,19 @@ export default function Index() {
           return updatedKeys;
         });
 
-        Taro.showToast({
-          title: "上传完成",
-          icon: "success",
-        });
+        if (newImageKeys.length > 0) {
+          Taro.showToast({
+            title: "上传完成",
+            icon: "success",
+          });
+        }
       }
     } catch (error) {
-      console.error("Photo selection failed:", error);
-      Taro.showToast({
-        title: "选择照片失败",
-        icon: "none",
+      console.error("Photo selection or upload failed:", error);
+      Taro.showModal({
+        title: "操作失败",
+        content: error.message || "选择或上传照片失败",
+        showCancel: false,
       });
     } finally {
       setIsUploading(false);
