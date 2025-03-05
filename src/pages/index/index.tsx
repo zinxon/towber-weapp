@@ -219,6 +219,7 @@ export default function Index() {
 
           // Get the file extension
           const fileExt = tempFilePath.split(".").pop();
+          // const fileName = `incident-${Date.now()}-${i}.${fileExt}`;
 
           try {
             // Get presigned URL from your backend
@@ -288,7 +289,7 @@ export default function Index() {
             Taro.showModal({
               title: "上传失败",
               content: `上传第 ${i + 1} 张照片失败: ${
-                error.message || "未知错误"
+                error.errMsg || error.message || "未知错误"
               }`,
               showCancel: false,
             });
