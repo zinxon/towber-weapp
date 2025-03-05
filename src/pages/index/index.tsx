@@ -46,6 +46,7 @@ export default function Index() {
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedImageKeys, setUploadedImageKeys] = useState<string[]>([]);
 
   const getCurrentLocation = async () => {
     try {
@@ -119,7 +120,13 @@ export default function Index() {
       return;
     }
 
-    // Form data object
+    // Log current state of uploadedImageKeys
+    console.log(
+      "Current uploadedImageKeys before submission:",
+      uploadedImageKeys
+    );
+
+    // Form data object with images
     const formData = {
       location,
       destination,
@@ -130,7 +137,11 @@ export default function Index() {
       selectedService,
       latitude,
       longitude,
+      imageKeys: uploadedImageKeys, // Add the image keys to the form data
     };
+
+    // Log the complete form data
+    console.log("Submitting form data:", formData);
 
     try {
       const response = await Taro.request({
@@ -148,6 +159,14 @@ export default function Index() {
           title: "提交成功",
           icon: "success",
         });
+
+        // Clear the form after successful submission
+        setSelectedPhotos([]);
+        setUploadedImageKeys([]);
+        setLicensePlate("");
+        setCustomerName("");
+        setPhoneNumber("");
+        setUseWheel(false);
       } else {
         console.error("Submission failed:", response.data);
         Taro.showToast({
@@ -192,13 +211,15 @@ export default function Index() {
         setIsUploading(true);
         setUploadProgress(0);
 
+        const newImageKeys: string[] = [];
+
         for (let i = 0; i < res.tempFilePaths.length; i++) {
           const tempFilePath = res.tempFilePaths[i];
           console.log("Selected image path:", tempFilePath);
 
           // Get the file extension
           const fileExt = tempFilePath.split(".").pop();
-          const fileName = `incident-${Date.now()}-${i}.${fileExt}`;
+          // const fileName = `incident-${Date.now()}-${i}.${fileExt}`;
 
           try {
             // Get presigned URL from your backend
@@ -227,8 +248,15 @@ export default function Index() {
                 "Content-Type": `image/${fileExt}`,
               },
             });
-
-            if (uploadRes.statusCode !== 200) {
+            // console.log("uploadRes", uploadRes);
+            if (uploadRes.statusCode === 200) {
+              // Parse the response to get the filename
+              const data = JSON.parse(uploadRes.data);
+              if (data.success && data.filename) {
+                newImageKeys.push(data.filename);
+                console.log("newImageKeys", newImageKeys);
+              }
+            } else {
               throw new Error("Upload failed");
             }
 
@@ -244,6 +272,13 @@ export default function Index() {
             });
           }
         }
+
+        // Update state with new image keys and use callback to ensure we have latest state
+        setUploadedImageKeys((prev) => {
+          const updatedKeys = [...prev, ...newImageKeys];
+          console.log("Updated image keys:", updatedKeys);
+          return updatedKeys;
+        });
 
         Taro.showToast({
           title: "上传完成",
@@ -263,7 +298,13 @@ export default function Index() {
 
   const removePhoto = (index: number) => {
     setSelectedPhotos((prev) => prev.filter((_, i) => i !== index));
+    setUploadedImageKeys((prev) => prev.filter((_, i) => i !== index));
   };
+
+  // Add this near your other useEffect
+  useEffect(() => {
+    console.log("uploadedImageKeys changed:", uploadedImageKeys);
+  }, [uploadedImageKeys]);
 
   useEffect(() => {
     getCurrentLocation();
@@ -510,13 +551,13 @@ export default function Index() {
         </View>
 
         {/* Estimated Cost */}
-        <View className="flex items-center gap-2 mb-5">
+        {/* <View className="flex items-center gap-2 mb-5">
           <Text>预估费用：</Text>
           <View className="flex items-center gap-1">
             <AtIcon value="help" size={20} color="#999" />
             <Text className="text-lime-500 text-xl font-bold">C$201.30</Text>
           </View>
-        </View>
+        </View> */}
 
         {/* Submit Button and agreement text */}
         <View className="pb-20 px-4">
