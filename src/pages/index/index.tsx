@@ -343,11 +343,11 @@ export default function Index() {
       {/* Header - Modern gradient */}
       <View className="flex items-center justify-between p-4 bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
         <View className="p-2">
-          <AtIcon value="home" size={24} color="#FFFFFF" />
+          {/* <AtIcon value="home" size={24} color="#FFFFFF" /> */}
         </View>
         <Text className="text-xl font-bold text-white">Towber 拖吧</Text>
         <View className="flex gap-6 p-2">
-          <AtIcon value="menu" size={24} color="#FFFFFF" />
+          {/* <AtIcon value="menu" size={24} color="#FFFFFF" /> */}
           <AtIcon
             value="user"
             size={24}
