@@ -20,7 +20,9 @@ export default function Index() {
   const [licensePlate, setLicensePlate] = useState("");
   const [useWheel, setUseWheel] = useState(false);
   const [location, setLocation] = useState("");
-  const [destination, setDestination] = useState("27 Harlech Court");
+  const [destination, setDestination] = useState(
+    "27 Harlech Ct, Thornhill, ON L3T 6L5"
+  );
   const [selectedService, setSelectedService] = useState<
     "accident" | "battery" | "stuck" | null
   >("accident");

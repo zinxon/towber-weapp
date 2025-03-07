@@ -11,6 +11,7 @@ interface UserInfo {
   country?: string;
   province?: string;
   city?: string;
+  signature?: string;
 }
 
 export default function UserProfile() {
